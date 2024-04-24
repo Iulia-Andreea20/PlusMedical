@@ -1,4 +1,4 @@
-import prisma from '@components/prisma';
+import prisma from '@models/prisma';
 
 export default async function handler(req, res) {
   if (req.method === 'DELETE') {
