@@ -1,36 +1,35 @@
 version: "3.8"
-
 services:
   db:
-    container_name: plusmedical-db
-    image: postgres:latest
+    container_name: ${POSTGRES_HOST}
+    image: postgres:${POSTGRES_VERSION}
     restart: always
     environment:
-      POSTGRES_USER: plusmedical
-      POSTGRES_PASSWORD: plusmedical
-      POSTGRES_DB: plusmedical
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
-      - net
+      - ${APP_NETWORK}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:${POSTGRES_VOLUME}
 
   ui:
-    container_name: plusmedical-ui
+    container_name: ${UI_HOST}
     build:
       context: .
       dockerfile: frontend.dockerfile
     ports:
-      - "3000:3000"
+      - "${UI_PORT}:${UI_PORT}"
     volumes:
-      - .:/plusmedical
+      - .:${UI_VOLUME}
     depends_on:
       - db
     networks:
-      - net
+      - ${APP_NETWORK}
     env_file:
-      - .env
+      - .env.docker
 
 networks:
   net:
