@@ -1,6 +1,3 @@
-require('dotenv').config();
-require('dotenv').config({ path: '.env.local' });
-
 import { PrismaClient } from '@prisma/client';
 
 let prisma;

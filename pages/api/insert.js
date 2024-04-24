@@ -1,12 +1,11 @@
-// Example API route: pages/api/insertTest2.js
-import prisma from '../../components/prisma'; // adjust the path as necessary
-console.log(prisma); // Should output the PrismaClient object
+import prisma from '@components/prisma';
+console.log(prisma); 
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { nume, prenume } = req.body;
-      const newEntry = await prisma.test2.create({
+      const newEntry = await prisma.test.create({
         data: {
           nume,
           prenume
