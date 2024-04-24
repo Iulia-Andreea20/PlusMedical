@@ -1,0 +1,26 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model test {
+  nume    String? @db.VarChar(100)
+  prenume String? @db.VarChar(100)
+  id      Int     @id @default(autoincrement())
+}
+
+model PrismaTEST {
+  id    Int    @id @default(autoincrement())
+  title String
+}
+
+model test2 {
+  nume    String? @db.VarChar(100)
+  prenume String? @db.VarChar(100)
+  id      Int     @id @default(autoincrement())
+}
