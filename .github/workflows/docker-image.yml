@@ -1,0 +1,52 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HOST }}" --password-stdin
+
+      - name: Set environment variables
+        run: |
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> $GITHUB_ENV
+          echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> $GITHUB_ENV
+          echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> $GITHUB_ENV
+          echo "POSTGRES_VERSION=${{ secrets.POSTGRES_VERSION }}" >> $GITHUB_ENV
+          echo "POSTGRES_VOLUME=${{ secrets.POSTGRES_VOLUME }}" >> $GITHUB_ENV
+          echo "UI_HOST=${{ secrets.UI_HOST }}" >> $GITHUB_ENV
+          echo "UI_PORT=${{ secrets.UI_PORT }}" >> $GITHUB_ENV
+          echo "UI_VOLUME=${{ secrets.UI_VOLUME }}" >> $GITHUB_ENV
+          echo "APP_NETWORK=${{ secrets.APP_NETWORK }}" >> $GITHUB_ENV
+          echo "DOCKER_HOST=${{ secrets.DOCKER_HOST }}" >> $GITHUB_ENV
+          # echo "CURRENT_UI_TAG=$(cat CURRENT_UI_TAG)" >> $GITHUB_ENV
+
+      - name: Build Docker images
+        run: |
+          docker-compose -f docker-compose.prod.yml build
+          docker-compose -f docker-compose.prod.yml push
+
+      - name: Create and push UI image
+        run: |
+          CONTAINER_ID=$(docker ps -qf "name=${{ secrets.UI_HOST }}")
+          docker commit $CONTAINER_ID ${{ secrets.UI_HOST }}:1.0.1
+          docker tag ${{ secrets.UI_HOST }}:$1.0.1 ${{ secrets.DOCKER_HOST }}/${{ secrets.UI_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_HOST }}/${{ secrets.UI_HOST }}:1.0.1
+  
+      - name: Create and push DB image
+        run: |
+          CONTAINER_ID=$(docker ps -qf "name=${{ secrets.POSTGRES_HOST }}")
+          docker commit $CONTAINER_ID ${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker tag ${{ secrets.POSTGRES_HOST }}:1.0.1 ${{ secrets.DOCKER_HOST }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_HOST }}/${{ secrets.POSTGRES_HOST }}:1.0.1
