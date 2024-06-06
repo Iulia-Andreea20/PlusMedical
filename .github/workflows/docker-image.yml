@@ -35,6 +35,7 @@ jobs:
       - name: Build Docker images
         run: |
           docker-compose -f docker-compose.prod.yml build
+          docker ps -a
         # docker-compose -f docker-compose.prod.yml push
 
       # - name: Create and push UI image
@@ -46,7 +47,7 @@ jobs:
 
       - name: Tag and Push UI Image
         run: |
-          docker tag ${{ secrets.UI_HOST }}:1.0.${{github.run_number}} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.${{github.run_number}}
+          docker tag ${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.${{github.run_number}}
           docker push ${DOCKER_USERNAME}/${UI_HOST}:1.0.${{github.run_number}}
   
       # - name: Create and push DB image
