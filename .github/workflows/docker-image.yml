@@ -48,7 +48,7 @@ jobs:
         run: |
             docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
   
-      # - name: Create and push DB image
-      #   run: |
-      #     docker tag ${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_VERSION }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+      - name: Create and push DB image
+        run: |
+          docker tag ${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_VERSION }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
