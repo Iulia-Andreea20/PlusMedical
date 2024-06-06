@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - ${APP_NETWORK}
     volumes:
@@ -20,8 +18,6 @@ services:
     build:
       context: .
       dockerfile: frontend.dockerfile
-    ports:
-      - "${UI_PORT}:${UI_PORT}"
     depends_on:
       - db
     networks:
