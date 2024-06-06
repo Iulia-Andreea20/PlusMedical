@@ -28,7 +28,7 @@ services:
       - ${APP_NETWORK}
 
 networks:
-  ${APP_NETWORK}:
+  net:
     driver: bridge
 
 volumes:
