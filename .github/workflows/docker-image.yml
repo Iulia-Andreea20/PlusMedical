@@ -46,9 +46,8 @@ jobs:
 
       - name: Tag and Push UI Image
         run: |
-            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.3
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.4
   
       - name: Create and push DB image
         run: |
-          docker tag postgres:${{ secrets.POSTGRES_VERSION }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.2
