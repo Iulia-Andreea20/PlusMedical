@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HOST }}" --password-stdin
+        run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Set environment variables
         run: |
@@ -29,7 +29,7 @@ jobs:
           echo "UI_PORT=${{ secrets.UI_PORT }}" >> $GITHUB_ENV
           echo "UI_VOLUME=${{ secrets.UI_VOLUME }}" >> $GITHUB_ENV
           echo "APP_NETWORK=${{ secrets.APP_NETWORK }}" >> $GITHUB_ENV
-          echo "DOCKER_HOST=${{ secrets.DOCKER_HOST }}" >> $GITHUB_ENV
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
           # echo "CURRENT_UI_TAG=$(cat CURRENT_UI_TAG)" >> $GITHUB_ENV
 
       - name: Build Docker images
@@ -41,12 +41,12 @@ jobs:
         run: |
           CONTAINER_ID=$(docker ps -qf "name=${{ secrets.UI_HOST }}")
           docker commit $CONTAINER_ID ${{ secrets.UI_HOST }}:1.0.1
-          docker tag ${{ secrets.UI_HOST }}:$1.0.1 ${{ secrets.DOCKER_HOST }}/${{ secrets.UI_HOST }}:1.0.1
-          docker push ${{ secrets.DOCKER_HOST }}/${{ secrets.UI_HOST }}:1.0.1
+          docker tag ${{ secrets.UI_HOST }}:$1.0.1 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
   
       - name: Create and push DB image
         run: |
           CONTAINER_ID=$(docker ps -qf "name=${{ secrets.POSTGRES_HOST }}")
           docker commit $CONTAINER_ID ${{ secrets.POSTGRES_HOST }}:1.0.1
-          docker tag ${{ secrets.POSTGRES_HOST }}:1.0.1 ${{ secrets.DOCKER_HOST }}/${{ secrets.POSTGRES_HOST }}:1.0.1
-          docker push ${{ secrets.DOCKER_HOST }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker tag ${{ secrets.POSTGRES_HOST }}:1.0.1 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
