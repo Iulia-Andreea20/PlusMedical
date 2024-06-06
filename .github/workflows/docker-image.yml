@@ -35,7 +35,6 @@ jobs:
       - name: Build Docker images
         run: |
           docker-compose -f docker-compose.prod.yml build
-          docker ps -a
         # docker-compose -f docker-compose.prod.yml push
 
       # - name: Create and push UI image
@@ -45,15 +44,13 @@ jobs:
       #     docker tag ${{ secrets.UI_HOST }}:$1.0.1 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
       #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
 
-      - name: Tag and Push UI Image
-        run: |
-          IMAGE_TAG=${GITHUB_SHA}
-          docker tag ${GITHUB_SHA}_ui ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}_ui:1.0.${{github.run_number}}
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}_ui:1.0.${{github.run_number}}
-  
-      # - name: Create and push DB image
+      # - name: Tag and Push UI Image
       #   run: |
-      #     CONTAINER_ID=$(docker ps -qf "name=${{ secrets.POSTGRES_HOST }}")
-      #     docker commit $CONTAINER_ID ${{ secrets.POSTGRES_HOST }}:1.0.1
-      #     docker tag ${{ secrets.POSTGRES_HOST }}:1.0.1 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+      #     IMAGE_TAG=${GITHUB_SHA}
+      #     docker tag ${GITHUB_SHA} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.${{github.run_number}}
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.${{github.run_number}}
+  
+      - name: Create and push DB image
+        run: |
+          docker tag ${{ secrets.POSTGRES_HOST }}:${{ secrets.POSTGRES_VERSION }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.1
