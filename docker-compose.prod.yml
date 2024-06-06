@@ -15,7 +15,7 @@ services:
 
   ui:
     container_name: ${UI_HOST}
-    image: ${DOCKER_USERNAME}/${UI_HOST}/1.0.1
+    image: ${DOCKER_USERNAME}/${UI_HOST}:1.0.1
     build:
       context: .
       dockerfile: frontend.dockerfile
