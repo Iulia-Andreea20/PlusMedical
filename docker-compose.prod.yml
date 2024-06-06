@@ -18,6 +18,7 @@ services:
   ui:
     container_name: ${UI_HOST}
     build:
+      context: .
       dockerfile: frontend.dockerfile
     ports:
       - "${UI_PORT}:${UI_PORT}"
@@ -25,8 +26,6 @@ services:
       - db
     networks:
       - ${APP_NETWORK}
-    env_file:
-      - .env.docker
 
 networks:
   ${APP_NETWORK}:
