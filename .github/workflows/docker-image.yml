@@ -40,13 +40,13 @@ jobs:
       # - name: Create and push UI image
       #   run: |
       #     CONTAINER_ID=$(docker ps -qf "name=${{ secrets.UI_HOST }}")
-      #     docker commit $CONTAINER_ID ${{ secrets.UI_HOST }}:1.0.1
-      #     docker tag ${{ secrets.UI_HOST }}:$1.0.1 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
+      #     docker commit $CONTAINER_ID ${{ secrets.UI_HOST }}:1.0.2
+      #     docker tag ${{ secrets.UI_HOST }}:$1.0.2 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.2
 
       - name: Tag and Push UI Image
         run: |
-            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.1
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.2
   
       - name: Create and push DB image
         run: |
