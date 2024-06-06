@@ -1,1 +1,1 @@
-FROM postgres:${POSTGRES_VERSION}
+FROM postgres:16.2
