@@ -1,4 +1,4 @@
-FROM node:16.2
+FROM node:21
 
 WORKDIR /plusmedical
 
