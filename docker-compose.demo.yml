@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  db:
+    container_name: ${POSTGRES_HOST}
+    image: ${DOCKER_USERNAME}/${POSTGRES_HOST}:1.0.0
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - ${APP_NETWORK}
+    volumes:
+      - postgres_data:${POSTGRES_VOLUME}
+
+  ui:
+    container_name: ${UI_HOST}
+    image: ${DOCKER_USERNAME}/${UI_HOST}:${APP_TAG}
+    ports:
+      - "${UI_PORT}:${UI_PORT}"
+    depends_on:
+      - db
+    networks:
+      - ${APP_NETWORK}
+    env_file:
+      - .env.docker
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  postgres_data: {}
