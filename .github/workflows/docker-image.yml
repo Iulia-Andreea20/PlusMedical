@@ -30,8 +30,7 @@ jobs:
           echo "UI_VOLUME=${{ secrets.UI_VOLUME }}" >> $GITHUB_ENV
           echo "APP_NETWORK=${{ secrets.APP_NETWORK }}" >> $GITHUB_ENV
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
-          echo "BD_TAG=$(cat DB_TAG)" >> $GITHUB_ENV
-          echo "UI_TAG=$(cat UI_TAG)" >> $GITHUB_ENV
+          echo "APP_TAG=$(cat APP_TAG)" >> $GITHUB_ENV
 
 
       - name: Build Docker images
@@ -40,11 +39,11 @@ jobs:
 
       - name: Tag and Push UI Image
         run: |
-            docker tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${UI_TAG}
-            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${UI_TAG}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${APP_TAG}
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${APP_TAG}
   
       - name: Tag and push DB image
         run: |
             echo ${DB_TAG}
-            docker tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${BD_TAG}
-            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${BD_TAG}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${APP_TAG}
+            docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${APP_TAG}
