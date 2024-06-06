@@ -2,10 +2,7 @@ version: "3.8"
 services:
   db:
     container_name: ${POSTGRES_HOST}
-    image: ${DOCKER_USERNAME}/${POSTGRES_HOST}
-    build:
-      context: .
-      dockerfile: backend.dockerfile
+    image: postgres:${POSTGRES_VERSION}
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
