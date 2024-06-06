@@ -31,6 +31,7 @@ jobs:
           echo "APP_NETWORK=${{ secrets.APP_NETWORK }}" >> $GITHUB_ENV
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
           echo "UI_TAG=$(cat UI_TAG)" >> $GITHUB_ENV
+          echo "BD_TAG=$(cat DB_TAG)" >> $GITHUB_ENV
 
       - name: Build Docker images
         run: |
@@ -38,9 +39,10 @@ jobs:
 
       - name: Tag and Push UI Image
         run: |
-            docker tag postgres:${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${UI_TAG}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${UI_TAG}
             docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:${UI_TAG}
   
-      # - name: Create and push DB image
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:1.0.3
+      - name: Tag and push DB image
+        run: |
+          docker tag postgres:${{ secrets.POSTGRES_VERSION }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${BD_TAG}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.POSTGRES_HOST }}:${BD_TAG}
