@@ -47,8 +47,8 @@ jobs:
 
       - name: Tag and Push UI Image
         run: |
-          docker tag ${{ secrets.UI_HOST }} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}:1.0.${{github.run_number}}
-          docker push ${DOCKER_USERNAME}/${UI_HOST}:1.0.${{github.run_number}}
+          docker tag ${{ secrets.UI_HOST }}_ui ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}_ui:1.0.${{github.run_number}}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.UI_HOST }}_ui:1.0.${{github.run_number}}
   
       # - name: Create and push DB image
       #   run: |
