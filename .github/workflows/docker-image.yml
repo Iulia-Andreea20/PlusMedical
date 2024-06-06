@@ -30,8 +30,9 @@ jobs:
           echo "UI_VOLUME=${{ secrets.UI_VOLUME }}" >> $GITHUB_ENV
           echo "APP_NETWORK=${{ secrets.APP_NETWORK }}" >> $GITHUB_ENV
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> $GITHUB_ENV
-          echo "UI_TAG=$(cat UI_TAG)" >> $GITHUB_ENV
           echo "BD_TAG=$(cat DB_TAG)" >> $GITHUB_ENV
+          echo "UI_TAG=$(cat UI_TAG)" >> $GITHUB_ENV
+
 
       - name: Build Docker images
         run: |
