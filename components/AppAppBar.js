@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,18 +12,20 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from '@components/ToggleColorMode';
-import { Margin, Padding } from '@mui/icons-material';
+import { useAuth } from '@components/AuthContext';
+import { useRouter } from 'next/router';
 
 const logoStyle = {
   width: '45px',
   height: 'auto',
   cursor: 'pointer',
   margin: '20px',
-
 };
 
 function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -41,6 +43,10 @@ function AppAppBar({ mode, toggleColorMode }) {
       });
       setOpen(false);
     }
+  }
+
+  const handleLogoClick = () => {
+    router.push('/');
   };
 
   return (
@@ -87,11 +93,10 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <img
-                src={
-                  '/images/logo.png'
-                }
+                src={'/images/logo.png'}
                 style={logoStyle}
                 alt="logo of PlusMedic"
+                onClick={handleLogoClick}
               />
               <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                 <MenuItem
@@ -115,7 +120,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   sx={{ py: '6px', px: '12px' }}
                 >
                   <Typography variant="body2" color="text.primary">
-                  Highlights
+                    Highlights
                   </Typography>
                 </MenuItem>
                 <MenuItem
@@ -136,26 +141,30 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              <Button
-                color="primary"
-                variant="text"
-                size="small"
-                component="a"
-                href="/material-ui/getting-started/templates/sign-in/"
-                target="_blank"
-              >
-                Sign in
-              </Button>
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                component="a"
-                href="/material-ui/getting-started/templates/sign-up/"
-                target="_blank"
-              >
-                Sign up
-              </Button>
+              {user ? (
+                <UserIcon user={user} />
+              ) : (
+                <>
+                  <Button
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    component="a"
+                    href="/sign-in"
+                  >
+                    Sign in
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    component="a"
+                    href="/sign-up"
+                  >
+                    Sign up
+                  </Button>
+                </>
+              )}
             </Box>
             <Box sx={{ display: { sm: '', md: 'none' } }}>
               <Button
@@ -186,9 +195,6 @@ function AppAppBar({ mode, toggleColorMode }) {
                   >
                     <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                   </Box>
-                  {/* <MenuItem onClick={() => scrollToSection('features')}>
-                    Features
-                  </MenuItem> */}
                   <MenuItem onClick={() => scrollToSection('testimonials')}>
                     Partners
                   </MenuItem>
@@ -200,30 +206,36 @@ function AppAppBar({ mode, toggleColorMode }) {
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
                   <Divider />
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      component="a"
-                      href="/material-ui/getting-started/templates/sign-up/"
-                      target="_blank"
-                      sx={{ width: '100%' }}
-                    >
-                      Sign up
-                    </Button>
-                  </MenuItem>
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="outlined"
-                      component="a"
-                      href="/material-ui/getting-started/templates/sign-in/"
-                      target="_blank"
-                      sx={{ width: '100%' }}
-                    >
-                      Sign in
-                    </Button>
-                  </MenuItem>
+                  {user ? (
+                    <MenuItem>
+                      <UserIcon user={user} />
+                    </MenuItem>
+                  ) : (
+                    <>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          component="a"
+                          href="/sign-up"
+                          sx={{ width: '100%' }}
+                        >
+                          Sign up
+                        </Button>
+                      </MenuItem>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          component="a"
+                          href="/sign-in"
+                          sx={{ width: '100%' }}
+                        >
+                          Sign in
+                        </Button>
+                      </MenuItem>
+                    </>
+                  )}
                 </Box>
               </Drawer>
             </Box>

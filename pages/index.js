@@ -1,12 +1,9 @@
-// import { Inter } from "next/font/google";
-import LandingPage from "./LandingPage";
-// const inter = Inter({ subsets: ["latin"] });
-
+import dynamic from 'next/dynamic';
+// import { BrowserRouter } from 'react-router-dom';
+const LandingPage = dynamic(() => import('./LandingPage'), { ssr: false });
 
 export default function Home() {
   return (
-    <>
-      <LandingPage />
-    </>
+    <LandingPage />
   );
 }

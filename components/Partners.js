@@ -26,7 +26,7 @@ export default function Partners() {
     <Container
       id="partners"
       sx={{
-        pt: { xs: 4, sm: 8 },
+        pt: { xs: 4, sm: 3 },
         pb: { xs: 8, sm: 16 },
         position: 'relative',
         display: 'flex',

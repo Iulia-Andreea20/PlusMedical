@@ -14,13 +14,24 @@ model test {
   id      Int     @id @default(autoincrement())
 }
 
-model PrismaTEST {
-  id    Int    @id @default(autoincrement())
-  title String
+model Users {
+  id          Int       @id @default(autoincrement()) @map("UserId")
+  lastName    String    @map("LastName")
+  firstName   String    @map("FirstName")
+  email       String    @unique @map("Mail")
+  phoneNumber String    @unique @map("PhoneNumber")
+  password    String    @map("Password")
+  coSigner    Boolean   @default(false) @map("CoSigner")
+  roleId      Int       @map("RoleId") @default(2)
+  role        Roles     @relation(fields: [roleId], references: [roleId])
+  @@map("Users")
 }
 
-model test2 {
-  nume    String? @db.VarChar(100)
-  prenume String? @db.VarChar(100)
-  id      Int     @id @default(autoincrement())
+model Roles {
+  roleId      Int      @id @default(autoincrement()) @map("RoleId")
+  role        String   @unique @map("Role")
+  users       Users[]
+
+  @@map("Roles")
 }
+

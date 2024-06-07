@@ -12,33 +12,45 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import signInImage from '@public/image.jpg';
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        PlusMedical
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+// import { useNavigate } from '@pages/LandingPage';
+import { useRouter } from 'next/router';
+import { useAuth } from '@components/AuthContext';
 
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  // const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       email: data.get('email'),
       password: data.get('password'),
+    };
+
+    // Send the data to the server using POST
+    const response = await fetch('/api/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     });
+
+    if (response.ok) {
+      const userData = await response.json();
+      // login(userData); // Update the context with the logged-in user
+      router.push('/');
+    } else {
+      const errorData = await response.json();
+      console.error(errorData.error);
+    }
+  };
+
+  const handleLogoClick = () => {
+    router.push('/');
   };
 
   return (
@@ -48,17 +60,17 @@ export default function SignInSide() {
         <Grid
           item
           xs={false}
-          sm={4}
+          sm={3}
           md={7}
           sx={{
-            // backgroundImage: 'url(https://source.unsplash.com/random?doctors)',
-            backgroundImage: 'url(/logIn.jpg)',
+            backgroundImage: 'url(/images/logo.png)',
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
             backgroundPosition: 'center',
+            cursor: 'pointer'
           }}
+          onClick={handleLogoClick}
         />
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
@@ -70,7 +82,7 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: '#db1e63' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
@@ -116,12 +128,15 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
+                  <Link
+                      component="button"
+                      variant="body2"
+                      onClick={() => router.push('/sign-up')}
+                    >
+                      {"Don't have an account? Sign Up"}
+                    </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
         </Grid>

@@ -14,12 +14,15 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@prisma/client": "^5.12.1",
+    "bcryptjs": "^2.4.3",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "next": "14.2.2",
     "pg": "^8.11.5",
     "react": "^18",
     "react-credit-cards": "^0.8.3",
     "react-dom": "^18",
+    "react-router-dom": "^6.23.1",
     "swr": "^2.2.5"
   },
   "devDependencies": {

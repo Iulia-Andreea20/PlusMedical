@@ -6,6 +6,7 @@ export const brand = {
   100: '#CEE5FD',
   200: '#9CCCFC',
   300: '#55A6F6',
+  550: '#4194FE',
   400: '#0A66C2',
   500: '#0959AA',
   600: '#064079',
@@ -53,29 +54,36 @@ export const green = {
   900: '#021D02',
 };
 
+export const contrast = {
+  200: '#db1e63'
+}
+
 const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
       light: brand[200],
-      main: '#4194FE',
+      main: brand[550],
       dark: brand[800],
-      contrastText: brand[50],
+      contrast: brand[50],
       ...(mode === 'dark' && {
         contrastText: brand[100],
         light: brand[300],
-        main: '#4194FE',
+        main: brand[550],
         dark: brand[800],
+        // contrast: contrast[200],
       }),
     },
     secondary: {
       light: secondary[300],
-      main: '#4194FE',
+      main: brand[550],
       dark: secondary[800],
+      lightRed: contrast[200],
       ...(mode === 'dark' && {
         light: secondary[400],
         main: secondary[500],
         dark: secondary[900],
+        lightRed: contrast[200],
       }),
     },
     warning: {
