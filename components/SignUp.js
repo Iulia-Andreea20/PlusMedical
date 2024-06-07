@@ -12,12 +12,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import Link from '@mui/material/Link';
 import { useRouter } from 'next/router';
-import Paper from '@mui/material/Paper';
 
 const defaultTheme = createTheme();
 
 export default function SignUpSide() {
   const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
 
   const validateEmail = (email) => {
@@ -42,6 +42,7 @@ export default function SignUpSide() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmitted(true);
     const data = new FormData(event.currentTarget);
     const formData = {
       firstName: data.get('firstName'),
@@ -95,6 +96,12 @@ export default function SignUpSide() {
     }
   };
 
+  const handleSignInClick = (event) => {
+    event.preventDefault();
+    setSubmitted(false);
+    router.push('/sign-in');
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -124,8 +131,8 @@ export default function SignUpSide() {
                   id="firstName"
                   label="First Name"
                   autoFocus
-                  error={Boolean(errors.firstName)}
-                  helperText={errors.firstName}
+                  error={submitted && Boolean(errors.firstName)}
+                  helperText={submitted && errors.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -136,8 +143,8 @@ export default function SignUpSide() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
-                  error={Boolean(errors.lastName)}
-                  helperText={errors.lastName}
+                  error={submitted && Boolean(errors.lastName)}
+                  helperText={submitted && errors.lastName}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -148,8 +155,8 @@ export default function SignUpSide() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  error={Boolean(errors.email)}
-                  helperText={errors.email}
+                  error={submitted && Boolean(errors.email)}
+                  helperText={submitted && errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -160,8 +167,8 @@ export default function SignUpSide() {
                   label="Phone Number"
                   name="phoneNumber"
                   autoComplete="tel"
-                  error={Boolean(errors.phoneNumber)}
-                  helperText={errors.phoneNumber}
+                  error={submitted && Boolean(errors.phoneNumber)}
+                  helperText={submitted && errors.phoneNumber}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -173,8 +180,8 @@ export default function SignUpSide() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                  error={Boolean(errors.password)}
-                  helperText={errors.password}
+                  error={submitted && Boolean(errors.password)}
+                  helperText={submitted && errors.password}
                 />
               </Grid>
             </Grid>
@@ -188,13 +195,15 @@ export default function SignUpSide() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link
-                  component="button"
-                  variant="body2"
-                  onClick={() => router.push('/sign-in')}
+              <a
+                  href="#"
+                  onClick={handleSignInClick}
+                  style={{  color: '#2D7BD4', cursor: 'pointer' }}
                 >
-                  Already have an account? Sign in
-                </Link>
+                  <Typography variant="body2">
+                    Already have an account? Sign in
+                  </Typography>
+                </a>
               </Grid>
             </Grid>
           </Box>
