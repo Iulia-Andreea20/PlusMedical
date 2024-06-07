@@ -9,14 +9,37 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
 import Link from '@mui/material/Link';
 import { useRouter } from 'next/router';
+import Paper from '@mui/material/Paper';
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
-
+export default function SignUpSide() {
+  const [errors, setErrors] = useState({});
   const router = useRouter();
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validatePassword = (password) => {
+    const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+
+  const validateName = (name) => {
+    const re = /^[A-Z][a-zA-Z-]*$/;
+    return re.test(name);
+  };
+
+  const validatePhoneNumber = (phoneNumber) => {
+    const re = /^\d{10}$/;
+    return re.test(phoneNumber);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -28,7 +51,34 @@ export default function SignUp() {
       password: data.get('password'),
     };
 
-    // Send the plain data to the server
+    const newErrors = {};
+
+    if (!formData.firstName || !validateName(formData.firstName)) {
+      newErrors.firstName = 'First name should contain only letters, start with a capital letter, and can contain a hyphen.';
+    }
+
+    if (!formData.lastName || !validateName(formData.lastName)) {
+      newErrors.lastName = 'Last name should contain only letters, start with a capital letter, and can contain a hyphen.';
+    }
+
+    if (!formData.email || !validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address.';
+    }
+
+    if (!formData.phoneNumber || !validatePhoneNumber(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Phone number must be exactly 10 digits.';
+    }
+
+    if (!formData.password || !validatePassword(formData.password)) {
+      newErrors.password = 'Password must be at least 8 characters long, contain one capital letter, one number, and one special character.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Send the data to the server using POST
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: {
@@ -38,11 +88,10 @@ export default function SignUp() {
     });
 
     if (response.ok) {
-      // Handle success (e.g., redirect to sign-in page)
       router.push('/sign-in');
     } else {
-      // Handle error
-      console.error('Failed to sign up');
+      const errorData = await response.json();
+      console.error(errorData.error);
     }
   };
 
@@ -75,6 +124,8 @@ export default function SignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={Boolean(errors.firstName)}
+                  helperText={errors.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -85,6 +136,8 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={Boolean(errors.lastName)}
+                  helperText={errors.lastName}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -95,6 +148,8 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={Boolean(errors.email)}
+                  helperText={errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -105,6 +160,8 @@ export default function SignUp() {
                   label="Phone Number"
                   name="phoneNumber"
                   autoComplete="tel"
+                  error={Boolean(errors.phoneNumber)}
+                  helperText={errors.phoneNumber}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -116,6 +173,8 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={Boolean(errors.password)}
+                  helperText={errors.password}
                 />
               </Grid>
             </Grid>

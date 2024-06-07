@@ -14,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from '@components/ToggleColorMode';
 import { useAuth } from '@components/AuthContext';
 import { useRouter } from 'next/router';
+import UserIcon from '@components/UserIcon';
 
 const logoStyle = {
   width: '45px',
@@ -43,7 +44,7 @@ function AppAppBar({ mode, toggleColorMode }) {
       });
       setOpen(false);
     }
-  }
+  };
 
   const handleLogoClick = () => {
     router.push('/');
@@ -141,8 +142,8 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              {user ? (
-                <UserIcon user={user} />
+              {user && user.email ? (
+                <UserIcon />
               ) : (
                 <>
                   <Button
@@ -206,9 +207,9 @@ function AppAppBar({ mode, toggleColorMode }) {
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
                   <Divider />
-                  {user ? (
+                  {user && user.email ? (
                     <MenuItem>
-                      <UserIcon user={user} />
+                      <UserIcon />
                     </MenuItem>
                   ) : (
                     <>

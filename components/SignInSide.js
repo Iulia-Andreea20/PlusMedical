@@ -19,7 +19,7 @@ import { useAuth } from '@components/AuthContext';
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  // const { login } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (event) => {
@@ -41,7 +41,7 @@ export default function SignInSide() {
 
     if (response.ok) {
       const userData = await response.json();
-      // login(userData); // Update the context with the logged-in user
+      login(userData); 
       router.push('/');
     } else {
       const errorData = await response.json();
