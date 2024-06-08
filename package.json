@@ -23,6 +23,7 @@
     "react-credit-cards": "^0.8.3",
     "react-dom": "^18",
     "react-router-dom": "^6.23.1",
+    "react-scroll": "^1.9.0",
     "swr": "^2.2.5"
   },
   "devDependencies": {

@@ -15,10 +15,13 @@ import SignInSide from '@components/SignInSide';
 import SignUp from '@components/SignUp';
 import { AuthProvider } from '@components/AuthContext';
 import Divider from '@mui/material/Divider';
-
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { scroller } from 'react-scroll';
 
 function LandingPageContent() {
   const location = useLocation();
+  const router = useRouter();
   const [mode, setMode] = React.useState('light');
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
@@ -31,6 +34,16 @@ function LandingPageContent() {
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (router.asPath.includes('#faq')) {
+      scroller.scrollTo('faq', {
+        duration: 2500,
+        delay: 0,
+        smooth: 'easeInOutQuart',
+      });
+    }
+  }, [router.asPath]);
 
   return (
     <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
@@ -46,7 +59,7 @@ function LandingPageContent() {
               <Divider />
               <Partners />
               <Highlights />
-              <FAQ />
+              <FAQ id="faq" />
               <Footer />
             </Box>
           </>

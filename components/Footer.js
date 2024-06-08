@@ -6,7 +6,7 @@ import Link from '@mui/material/Link';
 
 function Copyright() {
   return (
-    <Typography variant="body2" color="white" mt={1}>
+    <Typography variant="body2" color="white" align="center">
       {' © '}
       {new Date().getFullYear()}
       <Link href="https://www.linkedin.com/in/iulia-andreea-grigore-4a504920a/" target="_blank" rel="noopener" color="inherit">
@@ -18,13 +18,14 @@ function Copyright() {
 
 export default function Footer() {
   return (
-    <Box sx={{ bgcolor: 'black', color: 'white', py: { xs: 4, sm: 6 } }}>
+    <Box sx={{ bgcolor: 'black', color: 'white', py: { xs: 4, sm: 6 }, width: '100%' }}>
       <Container
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
+          width: '100%',
         }}
       >
         <Copyright />

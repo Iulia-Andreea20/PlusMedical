@@ -198,7 +198,7 @@ export default function SignUpSide() {
               <a
                   href="#"
                   onClick={handleSignInClick}
-                  style={{  color: '#2D7BD4', cursor: 'pointer' }}
+                  style={{  color: '#2D7BD4', cursor: 'pointer', textDecoration: 'underline' }}
                 >
                   <Typography variant="body2">
                     Already have an account? Sign in
