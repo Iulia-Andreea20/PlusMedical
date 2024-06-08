@@ -108,7 +108,7 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ mt: 25 , mb: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ mt: 25 , mb: 1, bgcolor: '#db1e63' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
@@ -154,7 +154,9 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link variant="body2"
+                        onClick={() => router.push('/sign-up')}
+                  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
