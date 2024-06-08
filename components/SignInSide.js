@@ -58,7 +58,7 @@ export default function SignInSide() {
             alt="Logo"
             onClick={handleLogoClick}
             sx={{
-              width: '200px',
+              width: '225px',
               height: 'auto',
               borderRadius: '8px',
               // border: '1px solid #ddd',
@@ -108,7 +108,7 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <Avatar sx={{ mt: 25 , mb: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
