@@ -20,18 +20,36 @@ const defaultTheme = createTheme();
 
 export default function SignInSide() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogoClick = () => {
     router.push('/');
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       email: data.get('email'),
       password: data.get('password'),
+    };
+
+    const response = await fetch('/api/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     });
+
+    if (response.ok) {
+      const userData = await response.json();
+      login(userData); 
+      router.push('/');
+    } else {
+      const errorData = await response.json();
+      console.error(errorData.error);
+    }
   };
 
   return (
@@ -144,6 +162,7 @@ export default function SignInSide() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                onClick={() => router.push('/')}
               >
                 Sign In
               </Button>
