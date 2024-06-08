@@ -40,6 +40,7 @@ export default function Hero() {
               alignSelf: 'center',
               textAlign: 'center',
               fontSize: 'clamp(3.5rem, 10vw, 4rem)',
+              color: '#3E4D6C',
             }}
           >
             Plus

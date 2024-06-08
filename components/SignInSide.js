@@ -12,45 +12,26 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import { useNavigate } from '@pages/LandingPage';
 import { useRouter } from 'next/router';
 import { useAuth } from '@components/AuthContext';
+import Stack from '@mui/material/Stack';
 
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const { login } = useAuth();
   const router = useRouter();
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const formData = {
-      email: data.get('email'),
-      password: data.get('password'),
-    };
-
-    // Send the data to the server using POST
-    const response = await fetch('/api/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
-      const userData = await response.json();
-      login(userData); 
-      router.push('/');
-    } else {
-      const errorData = await response.json();
-      console.error(errorData.error);
-    }
-  };
 
   const handleLogoClick = () => {
     router.push('/');
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
   };
 
   return (
@@ -63,15 +44,60 @@ export default function SignInSide() {
           sm={3}
           md={7}
           sx={{
-            backgroundImage: 'url(/images/logo.png)',
-            backgroundRepeat: 'no-repeat',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundPosition: 'center',
-            cursor: 'pointer'
           }}
-          onClick={handleLogoClick}
-        />
+        >
+          <Box
+            component="img"
+            src="/images/logo.png"
+            alt="Logo"
+            onClick={handleLogoClick}
+            sx={{
+              width: '200px',
+              height: 'auto',
+              borderRadius: '8px',
+              // border: '1px solid #ddd',
+              boxShadow: '0 4px 8px rgba(54, 149, 254, 0.4)',
+              cursor: 'pointer',
+              padding: 2,
+              mb: 2,
+            }}
+          />
+          <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
+            <Typography
+              variant="h1"
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignSelf: 'center',
+                textAlign: 'center',
+                fontSize: 'clamp(3.5rem, 10vw, 4rem)',
+                fontWeight: 'bold',
+                letterSpacing: '0.1rem',
+                color: '#3E4D6C',
+              }}
+            >
+              Plus
+              <Typography
+                component="span"
+                variant="h1"
+                sx={{
+                  fontSize: 'clamp(3rem, 10vw, 4rem)',
+                  color: '#3695FE',
+                  fontWeight: 'bold',
+                  letterSpacing: '0.1rem',
+                }}
+              >
+                Medical
+              </Typography>
+            </Typography>
+          </Stack>
+        </Grid>
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
@@ -82,7 +108,7 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: '#db1e63' }}>
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
@@ -128,13 +154,9 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link
-                      component="button"
-                      variant="body2"
-                      onClick={() => router.push('/sign-up')}
-                    >
-                      {"Don't have an account? Sign Up"}
-                    </Link>
+                  <Link href="#" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
                 </Grid>
               </Grid>
             </Box>
