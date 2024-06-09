@@ -20,7 +20,7 @@ const RequestService = () => {
         <InfoBox
           title="Request a PlusMedical Card"
           content="Do you want to send a request for a MedicalPlus?"
-          link={{ href: '#', text: 'Click here to request a service.' }}
+          link={{ href: '/requestform', text: 'Click here to request a service.' }}
         />
       </Stack>
     </Box>

@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { scroller } from 'react-scroll';
+import RequestForm from '@components/RequestForm';
 
 function LandingPageContent() {
   const location = useLocation();
@@ -66,6 +67,7 @@ function LandingPageContent() {
         } />
         <Route exact path="/sign-in" element={<SignInSide />} />
         <Route exact path="/sign-up" element={<SignUp />} />
+        <Route exact path="/requestform" element={<RequestForm />} />
       </Routes>
     </ThemeProvider>
   );

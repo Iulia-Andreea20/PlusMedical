@@ -15,6 +15,7 @@ import ToggleColorMode from '@components/ToggleColorMode';
 import { useAuth } from '@components/AuthContext';
 import { useRouter } from 'next/router';
 import UserIcon from '@components/UserIcon';
+import { CircularProgress } from '@mui/material';
 
 const logoStyle = {
   width: '45px',
@@ -25,7 +26,7 @@ const logoStyle = {
 
 function AppAppBar({ mode, toggleColorMode }) {
   const [open, setOpen] = React.useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const toggleDrawer = (newOpen) => () => {
@@ -207,10 +208,10 @@ function AppAppBar({ mode, toggleColorMode }) {
                   </MenuItem>
                   <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
                   <Divider />
-                  {user && user.email ? (
-                    <MenuItem>
+                  {loading ? (
+                      <CircularProgress size={24} />
+                  ) : user ? (
                       <UserIcon />
-                    </MenuItem>
                   ) : (
                     <>
                       <MenuItem>
