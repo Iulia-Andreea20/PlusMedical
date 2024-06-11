@@ -1,5 +1,5 @@
 import prisma from '@models/prisma';
-import CryptoJS from 'crypto-js';
+import { encryptData } from '@utils/cryptoUtilitary';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -10,17 +10,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
 
-      const secretKey = 'my-secret-key'; // Use a secure method to store and retrieve the secret key
-
       // Normalize and encrypt the email
       const normalizedEmail = email.trim().toLowerCase();
-      const encryptedEmail = CryptoJS.AES.encrypt(normalizedEmail, secretKey).toString();
+      const encryptedEmail = encryptData(normalizedEmail);
 
       // Encrypt other data
-      const encryptedFirstName = CryptoJS.AES.encrypt(firstName, secretKey).toString();
-      const encryptedLastName = CryptoJS.AES.encrypt(lastName, secretKey).toString();
-      const encryptedPhoneNumber = CryptoJS.AES.encrypt(phoneNumber, secretKey).toString();
-      const encryptedPassword = CryptoJS.AES.encrypt(password, secretKey).toString();
+      const encryptedFirstName = encryptData(firstName);
+      const encryptedLastName = encryptData(lastName);
+      const encryptedPhoneNumber = encryptData(phoneNumber);
+      const encryptedPassword = encryptData(password);
 
       // Find the default user role
       const userRole = await prisma.roles.findUnique({

@@ -14,6 +14,9 @@ import SplitScreenLayout from '@components/SplitScreenLayout';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import InputAdornment from '@mui/material/InputAdornment';
+// import { handleErrors } from '@utils/errorHandlers';
+// import { handleFileChange, handleInputChange, handleCheckboxChange  } from '@utils/changeHandlers';
+import { validateForm } from '@utils/qualityChecks';
 
 const defaultTheme = createTheme();
 
@@ -22,8 +25,47 @@ export default function RequestForm() {
   const [formErrors, setFormErrors] = useState({});
   const [isGuarantor, setIsGuarantor] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submissionError, setSubmissionError] = useState(null);
+  const [requestId, setRequestId] = useState(null);
+  
+  const checkBeneficiaryCNP = async (cnp) => {
+    const response = await fetch('/api/check-beneficiary-cnp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ cnp }),
+    });
+    const data = await response.json();
+    return data.exists;
+  };
 
-  const handleSubmit = (event) => {
+//   const uploadFile = async (file, fileType) => {
+//     const fileText = await file.text();
+//     try {
+//       const response = await fetch('/api/upload-file', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//           requestId,
+//           fileContent: fileText,
+//           fileType,
+//         }),
+//       });
+//       if (!response.ok) {
+//         throw new Error(`Failed to upload file: ${response.statusText}`);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       setSubmissionError(error.message);
+//       return false;
+//     }
+//     return true;
+//   };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
     const data = new FormData(event.currentTarget);
@@ -38,7 +80,7 @@ export default function RequestForm() {
     }
 
     // Validate other required fields
-    const requiredFields = ['city', 'street', 'number', 'incomeStatement', 'idCopy', 'requestedAmount'];
+    const requiredFields = ['country', 'province', 'city', 'street', 'number', 'incomeStatement', 'idCopy', 'requestedAmount'];
     requiredFields.forEach(field => {
       if (!data.get(field)) {
         errors[field] = 'This field is required.';
@@ -65,15 +107,20 @@ export default function RequestForm() {
       errors.ap = 'Apartment Number must be a numeric value.';
     }
 
-    // Validate Guarantor CNP if the checkbox is checked
+    // Validate Beneficiary CNP if the checkbox is checked
     if (isGuarantor) {
-      const guarantorId = data.get('guarantorId');
-      if (!guarantorId) {
-        errors.guarantorId = 'Guarantor CNP is required.';
-      } else if (!/^\d{13}$/.test(guarantorId)) {
-        errors.guarantorId = 'Guarantor CNP must be exactly 13 digits.';
-      } else if (guarantorId === cnp) {
-        errors.guarantorId = 'Guarantor CNP must be different from Personal CNP.';
+      const beneficiaryCNP = data.get('beneficiaryCNP');
+      if (!beneficiaryCNP) {
+        errors.beneficiaryCNP = 'Beneficiary CNP is required.';
+      } else if (!/^\d{13}$/.test(beneficiaryCNP)) {
+        errors.beneficiaryCNP = 'Beneficiary CNP must be exactly 13 digits.';
+      } else if (beneficiaryCNP === cnp) {
+        errors.beneficiaryCNP = 'Beneficiary CNP must be different from Personal CNP.';
+      } else {
+        const exists = await checkBeneficiaryCNP(beneficiaryCNP);
+        if (!exists) {
+          errors.beneficiaryCNP = 'Beneficiary CNP does not exist in the database.';
+        }
       }
     }
 
@@ -97,10 +144,54 @@ export default function RequestForm() {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      // Handle form submission logic
-      console.log('Form Data:', data);
-    }
-  };
+
+        const user = JSON.parse(localStorage.getItem('user'));
+        const email = user?.email;
+
+        const formData = new FormData();
+        const jsonData = JSON.stringify({
+            cnp: data.get('cnp'),
+            email: email,
+            address: {
+              localityId: 1,
+              country: data.get('country'),
+              province: data.get('province'),
+              city: data.get('city'),
+              street: data.get('street'),
+              number: data.get('number'),
+              block: data.get('block'),
+              staircase: data.get('staircase'),
+              apartment: data.get('ap'),
+            },
+            requestedAmount: data.get('requestedAmount'),
+            isGuarantor,
+            beneficiaryCNP: isGuarantor ? data.get('beneficiaryCNP') : null,
+          });
+      
+        formData.append('jsonData',jsonData);
+        formData.append('incomeStatement', incomeStatement);
+        formData.append('idCopy', idCopy);
+      
+        
+          try {
+            const response = await fetch('/api/submit-request', {
+              method: 'POST',
+              body: formData
+            });
+        
+            const result = await response.json();
+            if (!response.ok) {
+              throw new Error(result.message || 'Failed to submit request');
+            }
+        
+            setRequestId(result.requestId);
+            alert('Request submitted successfully');
+          } catch (error) {
+            console.error(error);
+            setSubmissionError(error.message);
+          }
+        };
+    };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -109,7 +200,7 @@ export default function RequestForm() {
 
     if (file && file.type !== 'application/pdf') {
       errors[name] = 'Only PDF files are allowed.';
-    } else if (file && file.size > 5 * 1024 * 1024) {
+    } else if (file && file.size > 0.5 * 1024 * 1024) {
       errors[name] = 'File size should be less than 5MB.';
     } else {
       delete errors[name];
@@ -140,7 +231,7 @@ export default function RequestForm() {
     setIsGuarantor(checked);
     if (!checked) {
       setFormErrors((prevErrors) => {
-        const { guarantorId, ...rest } = prevErrors;
+        const { beneficiaryCNP, ...rest } = prevErrors;
         return rest;
       });
     }
@@ -185,82 +276,111 @@ export default function RequestForm() {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="city"
-                    label="City"
-                    name="city"
-                    autoComplete="city"
-                    error={formSubmitted && Boolean(formErrors.city)}
-                    helperText={formSubmitted && formErrors.city}
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="street"
-                    label="Street"
-                    name="street"
-                    autoComplete="street"
-                    error={formSubmitted && Boolean(formErrors.street)}
-                    helperText={formSubmitted && formErrors.street}
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    fullWidth
-                    id="number"
-                    label="Number"
-                    name="number"
-                    autoComplete="number"
-                    error={formSubmitted && Boolean(formErrors.number)}
-                    helperText={formSubmitted && formErrors.number}
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    id="block"
-                    label="Block"
-                    name="block"
-                    autoComplete="block"
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    id="scara"
-                    label="Scara"
-                    name="scara"
-                    autoComplete="scara"
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    id="ap"
-                    label="Apartment Number"
-                    name="ap"
-                    autoComplete="ap"
-                    error={formSubmitted && Boolean(formErrors.ap)}
-                    helperText={formSubmitted && formErrors.ap}
-                    onChange={handleInputChange}
-                    sx={{ mb: 1 }}
-                  />
-                </Grid>
+                    <TextField
+                        required
+                        fullWidth
+                        id="country"
+                        label="Country"
+                        name="country"
+                        autoComplete="country"
+                        error={formSubmitted && Boolean(formErrors.country)}
+                        helperText={formSubmitted && formErrors.country}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        fullWidth
+                        id="province"
+                        label="Province"
+                        name="province"
+                        autoComplete="province"
+                        error={formSubmitted && Boolean(formErrors.province)}
+                        helperText={formSubmitted && formErrors.province}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        fullWidth
+                        id="city"
+                        label="City"
+                        name="city"
+                        autoComplete="city"
+                        error={formSubmitted && Boolean(formErrors.city)}
+                        helperText={formSubmitted && formErrors.city}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        fullWidth
+                        id="street"
+                        label="Street"
+                        name="street"
+                        autoComplete="street"
+                        error={formSubmitted && Boolean(formErrors.street)}
+                        helperText={formSubmitted && formErrors.street}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        fullWidth
+                        id="number"
+                        label="Number"
+                        name="number"
+                        autoComplete="number"
+                        error={formSubmitted && Boolean(formErrors.number)}
+                        helperText={formSubmitted && formErrors.number}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        fullWidth
+                        id="block"
+                        label="Block"
+                        name="block"
+                        autoComplete="block"
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        fullWidth
+                        id="staircase"
+                        label="Staircase"
+                        name="staircase"
+                        autoComplete="staircase"
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                    <TextField
+                        fullWidth
+                        id="ap"
+                        label="Apartment Number"
+                        name="ap"
+                        autoComplete="ap"
+                        error={formSubmitted && Boolean(formErrors.ap)}
+                        helperText={formSubmitted && formErrors.ap}
+                        onChange={handleInputChange}
+                        sx={{ mb: 1 }}
+                    />
+                    </Grid>
               </Grid>
               <TextField
                 margin="normal"
@@ -322,12 +442,12 @@ export default function RequestForm() {
                 <TextField
                   margin="normal"
                   fullWidth
-                  id="guarantorId"
-                  label="Guarantor CNP"
-                  name="guarantorCNP"
-                  autoComplete="guarantorCNP"
-                  error={formSubmitted && Boolean(formErrors.guarantorId)}
-                  helperText={formSubmitted && formErrors.guarantorId}
+                  id="beneficiaryCNP"
+                  label="Beneficiary CNP"
+                  name="beneficiaryCNP"
+                  autoComplete="beneficiaryCNP"
+                  error={formSubmitted && Boolean(formErrors.beneficiaryCNP)}
+                  helperText={formSubmitted && formErrors.beneficiaryCNP}
                   onChange={handleInputChange}
                   sx={{ mt: 2 }}
                 />

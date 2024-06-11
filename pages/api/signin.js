@@ -1,6 +1,5 @@
 import prisma from '@models/prisma';
-import bcrypt from 'bcryptjs';
-import CryptoJS from 'crypto-js';
+import { decryptData } from '@utils/cryptoUtilitary';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -11,19 +10,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Missing email or password' });
       }
 
-      const secretKey = 'my-secret-key'; // Use a secure method to store and retrieve the secret key
-
-      // Normalize the email to match it with the decrypted emails in the database
       const normalizedEmail = email.trim().toLowerCase();
 
-      // Fetch all users from the database
       const users = await prisma.users.findMany();
 
       // Iterate over users and decrypt their emails to find a match
       let decryptedEmail = null;
       let matchedUser = null;
       for (let user of users) {
-        decryptedEmail = CryptoJS.AES.decrypt(user.email, secretKey).toString(CryptoJS.enc.Utf8);
+        decryptedEmail = decryptData(user.email);
         if (decryptedEmail === normalizedEmail) {
           matchedUser = user;
           break;
@@ -35,15 +30,15 @@ export default async function handler(req, res) {
       }
 
       // Compare the passwords
-      const decryptedPassword = CryptoJS.AES.decrypt(matchedUser.password, secretKey).toString(CryptoJS.enc.Utf8);
+      const decryptedPassword = decryptData(matchedUser.password);
       if (decryptedPassword !== password) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
       // Decrypt other user information
-      const decryptedFirstName = CryptoJS.AES.decrypt(matchedUser.firstName, secretKey).toString(CryptoJS.enc.Utf8);
-      const decryptedLastName = CryptoJS.AES.decrypt(matchedUser.lastName, secretKey).toString(CryptoJS.enc.Utf8);
-      const decryptedPhoneNumber = CryptoJS.AES.decrypt(matchedUser.phoneNumber, secretKey).toString(CryptoJS.enc.Utf8);
+      const decryptedFirstName = decryptData(matchedUser.firstName);
+      const decryptedLastName = decryptData(matchedUser.lastName);
+      const decryptedPhoneNumber = decryptData(matchedUser.phoneNumber);
 
       // Return the decrypted user information
       res.status(200).json({

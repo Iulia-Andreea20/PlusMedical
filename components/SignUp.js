@@ -26,7 +26,7 @@ export default function SignUpSide() {
   };
 
   const validatePassword = (password) => {
-    const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const re = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%#*?&]{8,}$/;
     return re.test(password);
   };
 

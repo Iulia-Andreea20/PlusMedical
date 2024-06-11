@@ -15,23 +15,140 @@ model test {
 }
 
 model Users {
-  id          Int       @id @default(autoincrement()) @map("UserId")
-  lastName    String    @map("LastName")
-  firstName   String    @map("FirstName")
-  email       String    @unique @map("Mail")
-  phoneNumber String    @unique @map("PhoneNumber")
-  password    String    @map("Password")
-  coSigner    Boolean   @default(false) @map("CoSigner")
-  roleId      Int       @map("RoleId") @default(2)
-  role        Roles     @relation(fields: [roleId], references: [roleId])
+  id          Int                   @id @default(autoincrement()) @map("UserId")
+  lastName    String                @map("LastName")
+  firstName   String                @map("FirstName")
+  email       String                @unique @map("Mail")
+  phoneNumber String                @unique @map("PhoneNumber")
+  password    String                @map("Password")
+  cnp         String?               @unique @map("CNP")
+  coSigner    Boolean               @default(false) @map("CoSigner")
+  roleId      Int                   @default(2) @map("RoleId")
+  role        Roles                 @relation(fields: [roleId], references: [roleId])
+  addresses   Address[]             @relation("UserAddresses")
+  documents   Document[]            @relation("UserDocuments")
+  beneficiary BeneficiaryCoSigners? @relation("Beneficiary")
+  coSignerFor BeneficiaryCoSigners? @relation("CoSigner")
+  requests    Requests?             @relation("UserRequests")
+  cards       Cards?                @relation("UserCards")
+
   @@map("Users")
 }
 
 model Roles {
-  roleId      Int      @id @default(autoincrement()) @map("RoleId")
-  role        String   @unique @map("Role")
-  users       Users[]
+  roleId Int     @id @default(autoincrement()) @map("RoleId")
+  role   String  @unique @map("Role")
+  users  Users[]
 
   @@map("Roles")
 }
 
+model BeneficiaryCoSigners {
+  id            Int   @id @default(autoincrement())
+  beneficiaryId Int   @unique @map("BeneficiaryId")
+  coSignerId    Int   @unique @map("CoSignerId")
+  beneficiary   Users @relation("Beneficiary", fields: [beneficiaryId], references: [id])
+  coSigner      Users @relation("CoSigner", fields: [coSignerId], references: [id])
+
+  @@map("BeneficiaryCoSigners")
+}
+
+model Country {
+  id        Int        @id @default(autoincrement()) @map("CountryId")
+  name      String     @unique @map("Name")
+  provinces Province[] @relation("CountryProvinces")
+
+  @@map("Countries")
+}
+
+model Province {
+  id         Int        @id @default(autoincrement()) @map("ProvinceId")
+  name       String     @unique @map("Name")
+  countryId  Int        @map("CountryId")
+  country    Country    @relation(name: "CountryProvinces", fields: [countryId], references: [id])
+  localities Locality[] @relation("ProvinceLocalities")
+
+  @@map("Provinces")
+}
+
+model Locality {
+  id         Int       @id @default(autoincrement()) @map("LocalityId")
+  name       String    @unique @map("Name")
+  provinceId Int       @map("ProvinceId")
+  province   Province  @relation(name: "ProvinceLocalities", fields: [provinceId], references: [id])
+  addresses  Address[] @relation("LocalityAddresses")
+
+  @@map("Localities")
+}
+
+model Address {
+  id         Int      @id @default(autoincrement()) @map("AddressId")
+  userId     Int      @map("UserId")
+  user       Users    @relation(fields: [userId], references: [id], name: "UserAddresses")
+  localityId Int      @map("LocalityId")
+  locality   Locality @relation(fields: [localityId], references: [id], name: "LocalityAddresses")
+  street     String   @map("Street")
+  number     String   @map("Number")
+  block      String?  @map("Block")
+  staircase  String?  @map("Staircase")
+  apartment  String?  @map("Apartment")
+  province   String?  @map("Province")
+  country    String?  @map("Country")
+
+  @@map("Addresses")
+}
+
+model DocumentType {
+  id          Int        @id @default(autoincrement()) @map("DocumentTypeId")
+  name        String     @map("Name")
+  description String?    @map("Description")
+  documents   Document[] @relation("DocumentTypeDocuments")
+
+  @@map("DocumentTypes")
+}
+
+model Document {
+  id             Int          @id @default(autoincrement()) @map("DocumentId")
+  userId         Int          @map("UserId")
+  user           Users        @relation(fields: [userId], references: [id], name: "UserDocuments")
+  documentTypeId Int          @map("DocumentTypeId")
+  documentType   DocumentType @relation(fields: [documentTypeId], references: [id], name: "DocumentTypeDocuments")
+  uploadDate     DateTime     @default(now()) @map("UploadDate")
+  path           String       @map("Path")
+
+  @@map("Documents")
+}
+
+model Requests {
+  id              Int           @id @default(autoincrement()) @map("RequestId")
+  userId          Int           @unique @map("UserId")
+  user            Users         @relation(fields: [userId], references: [id], name: "UserRequests")
+  requestDate     DateTime      @default(now()) @map("RequestDate")
+  status          RequestStatus @map("Status")
+  requestedAmount Float         @map("RequestedAmount")
+  cards           Cards?        @relation("RequestCards")
+
+  @@map("Requests")
+}
+
+enum RequestStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+model Cards {
+  id             Int      @id @default(autoincrement()) @map("CardId")
+  requestId      Int      @unique @map("RequestId")
+  request        Requests @relation(fields: [requestId], references: [id], name: "RequestCards")
+  userId         Int      @unique @map("UserId")
+  user           Users    @relation(fields: [userId], references: [id], name: "UserCards")
+  cardNumber     String   @unique @map("CardNumber")
+  signature      String   @map("Signature")
+  currentBalance Float    @default(0.0) @map("CurrentBalance")
+  approvedAmount Float    @map("ApprovedAmount")
+  expirationDate DateTime @map("ExpirationDate")
+  test           String?  @map("Test")
+
+  @@map("Cards")
+}
