@@ -14,9 +14,7 @@ import SplitScreenLayout from '@components/SplitScreenLayout';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import InputAdornment from '@mui/material/InputAdornment';
-// import { handleErrors } from '@utils/errorHandlers';
-// import { handleFileChange, handleInputChange, handleCheckboxChange  } from '@utils/changeHandlers';
-import { validateForm } from '@utils/qualityChecks';
+import { useRouter } from 'next/router';
 
 const defaultTheme = createTheme();
 
@@ -25,8 +23,10 @@ export default function RequestForm() {
   const [formErrors, setFormErrors] = useState({});
   const [isGuarantor, setIsGuarantor] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [submissionError, setSubmissionError] = useState(null);
-  const [requestId, setRequestId] = useState(null);
+  // const [submissionError, setSubmissionError] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const router = useRouter();
+
   
   const checkBeneficiaryCNP = async (cnp) => {
     const response = await fetch('/api/check-beneficiary-cnp', {
@@ -39,31 +39,6 @@ export default function RequestForm() {
     const data = await response.json();
     return data.exists;
   };
-
-//   const uploadFile = async (file, fileType) => {
-//     const fileText = await file.text();
-//     try {
-//       const response = await fetch('/api/upload-file', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           requestId,
-//           fileContent: fileText,
-//           fileType,
-//         }),
-//       });
-//       if (!response.ok) {
-//         throw new Error(`Failed to upload file: ${response.statusText}`);
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       setSubmissionError(error.message);
-//       return false;
-//     }
-//     return true;
-//   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -184,8 +159,8 @@ export default function RequestForm() {
               throw new Error(result.message || 'Failed to submit request');
             }
         
-            setRequestId(result.requestId);
             alert('Request submitted successfully');
+            router.push(`/request-details/`);
           } catch (error) {
             console.error(error);
             setSubmissionError(error.message);
@@ -464,6 +439,12 @@ export default function RequestForm() {
           </Box>
         </Container>
       </SplitScreenLayout>
+      <CustomAlert
+        open={openSnackbar}
+        onClose={() => setOpenSnackbar(false)}
+        severity="success"
+        message="Request submitted successfully!"
+      />
     </ThemeProvider>
   );
 }

@@ -30,12 +30,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     console.log('Logging out user');
     router.replace('/');
+    localStorage.removeItem('user');
+    setUser({ firstName: null, lastName: null, email: null });
 
-
-    setTimeout(() => {
-        localStorage.removeItem('user');
-        setUser({ firstName: null, lastName: null, email: null });
-    }, 100);
 
   };
 
