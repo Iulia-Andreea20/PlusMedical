@@ -28,17 +28,17 @@ yarn-error.log*
 # local env files
 .env*.local
 .env.docker
+.env
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
+TOREMEMBER
 commands
 node_modules
 secret
 Documents
-TOREMEMBER
 resurse-web
 uploads
