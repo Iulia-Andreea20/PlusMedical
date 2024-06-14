@@ -54,9 +54,9 @@ const UserIcon = () => {
         anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
         PaperProps={{
           style: {
-            borderRadius: '15px', // Make the menu rounder
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Adjust shadow color and intensity
-            width: '100px', // Adjust width as needed
+            borderRadius: '15px', 
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            width: '100px',
             marginTop: '7px',
           },
         }}

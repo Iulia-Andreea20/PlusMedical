@@ -41,7 +41,13 @@ export default function SignInSide() {
     if (response.ok) {
       const userData = await response.json();
       login(userData); 
-      router.push('/request');
+      console.log('User logged in:', userData);
+      if(userData.role === 'admin') {
+        router.push('/admin-dashboard');
+      } else {
+        router.push('/request');
+      }
+
     } else {
       const errorData = await response.json();
       console.error(errorData.error);

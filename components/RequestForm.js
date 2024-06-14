@@ -439,12 +439,6 @@ export default function RequestForm() {
           </Box>
         </Container>
       </SplitScreenLayout>
-      <CustomAlert
-        open={openSnackbar}
-        onClose={() => setOpenSnackbar(false)}
-        severity="success"
-        message="Request submitted successfully!"
-      />
     </ThemeProvider>
   );
 }
