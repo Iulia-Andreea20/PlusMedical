@@ -2,14 +2,14 @@ import prisma from "@models/prisma";
 
 async function findRequestByUserId(userId) {
   try {
-    const requests = await prisma.requests.findMany();
+    const request = await prisma.requests.findUnique({
+      where: { userId },
+      include: {
+        cards: true, // Include card details in the request
+      },
+    });
 
-    for (let request of requests) {
-      if (request.userId === userId) {
-        return request;
-      }
-    }
-
+    return request;
   } catch (error) {
     throw new Error(`Error fetching request: ${error.message}`);
   } finally {

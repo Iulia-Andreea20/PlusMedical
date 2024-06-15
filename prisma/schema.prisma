@@ -126,6 +126,8 @@ model Requests {
   requestDate     DateTime      @default(now()) @map("RequestDate")
   status          RequestStatus @map("Status")
   requestedAmount Float         @map("RequestedAmount")
+  updatedStatus   DateTime?     @map("UpdatedStatus")
+  rejectedReason  String?       @map("RejectedReason") 
   cards           Cards?        @relation("RequestCards")
 
   @@map("Requests")
@@ -148,7 +150,6 @@ model Cards {
   currentBalance Float    @default(0.0) @map("CurrentBalance")
   approvedAmount Float    @map("ApprovedAmount")
   expirationDate DateTime @map("ExpirationDate")
-  test           String?  @map("Test")
 
   @@map("Cards")
 }

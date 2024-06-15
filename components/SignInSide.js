@@ -44,8 +44,13 @@ export default function SignInSide() {
       console.log('User logged in:', userData);
       if(userData.role === 'admin') {
         router.push('/admin-dashboard');
-      } else {
+      }
+      if(userData.requestStatus === 'null'){
         router.push('/request');
+      } else if(userData.requestStatus === 'Rejected'){
+        router.push('/request-details');
+      } else {
+        router.push('/card-details');
       }
 
     } else {

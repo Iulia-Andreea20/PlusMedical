@@ -1,12 +1,9 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Container, Box, Typography, Card, CardContent } from '@mui/material';
 import Footer from '@components/Footer';
 import Header from '@components/AppAppBar';
 
 const RequestDetails = () => {
-  const router = useRouter();
-  const { email } = router.query;
   const [requestDetails, setRequestDetails] = useState(null);
   const [error, setError] = useState(null);
 
@@ -54,6 +51,19 @@ const RequestDetails = () => {
     }
   };
 
+  const getCardColor = (status) => {
+    switch (status) {
+      case 'Pending':
+        return '#fff3cd'; 
+      case 'Approved':
+        return '#d4edda'; 
+      case 'Rejected':
+        return '#f8d7da'; 
+      default:
+        return '#e3f2fd'; 
+    }
+  };
+
   return (
     <>
       <Header />
@@ -66,7 +76,7 @@ const RequestDetails = () => {
             <Card sx={{
                 width: '100%',
                 mb: 2,
-                bgcolor: '#e3f2fd',
+                bgcolor: getCardColor(requestDetails.status),
                 borderRadius: '16px',
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 padding: 2,
@@ -84,6 +94,16 @@ const RequestDetails = () => {
                 <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'Arial, sans-serif' }}>
                   Requested Amount: {requestDetails.requestedAmount} RON
                 </Typography>
+                {requestDetails.status === 'Approved' && (
+                  <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'Arial, sans-serif' }}>
+                    Approved Amount: {requestDetails.cards.approvedAmount} RON
+                  </Typography>
+                )}
+                {/* {requestDetails.status === 'Rejected' && (
+                  <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'Arial, sans-serif' }}>
+                    Rejection Reason: {requestDetails.rejectedReason}
+                  </Typography>
+                )} */}
               </CardContent>
             </Card>
           </Box>

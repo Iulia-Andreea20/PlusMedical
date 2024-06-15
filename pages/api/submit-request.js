@@ -1,12 +1,12 @@
 import formidable from 'formidable';
-import prisma from '@models/prisma'; // Asigură-te că prisma este configurat corect
-import { encryptData, decryptData } from '@utils/cryptoUtilitary'; // Asigură-te că aceste utilitare sunt definite
-import path from 'path'; // Importă modulul path pentru a manipula căi de fișiere
-import fs from 'fs/promises'; // Importă modulul fs pentru a manipula fișiere
+import prisma from '@models/prisma'; 
+import { encryptData, decryptData } from '@utils/cryptoUtilitary'; 
+import path from 'path';
+import fs from 'fs/promises';
 
 export const config = {
   api: {
-    bodyParser: false, // Dezactivează bodyParser-ul implicit pentru a putea folosi formidable
+    bodyParser: false,
   },
 };
 
@@ -30,7 +30,6 @@ export default async function handler(req, res) {
     }
 
     const jsonData = fields.jsonData;
-    console.log('Received jsonData:', jsonData); // Log jsonData for debugging
     if (!jsonData) {
       return res.status(400).json({ message: 'Missing jsonData field' });
     }

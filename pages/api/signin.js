@@ -42,6 +42,10 @@ export default async function handler(req, res) {
       const role = await prisma.roles.findUnique({
         where: { roleId: matchedUser.roleId },
       });
+      
+      const request = await prisma.requests.findUnique({
+        where: { userId: matchedUser.id },
+      });
 
       // Return the decrypted user information
       res.status(200).json({
@@ -50,6 +54,7 @@ export default async function handler(req, res) {
         email: decryptedEmail,
         phoneNumber: decryptedPhoneNumber,
         role: role.role,
+        requestStatus: request ? request.status : null,
       });
     } catch (error) {
       console.error('Failed to authenticate user:', error);

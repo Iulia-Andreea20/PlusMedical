@@ -69,6 +69,9 @@ async function findUserByCNP(cnp) {
             requestDate: user.requests.requestDate,
             status: user.requests.status,
             requestedAmount: user.requests.requestedAmount,
+            updatedStatus: user.requests.updatedStatus ? user.requests.updatedStatus : null,
+            // approvedAmount: user.requests.approvedAmount ? user.requests.approvedAmount : null,
+            rejectedReason: user.requests.rejectedReason ? user.requests.rejectedReason : null,
             cards: user.requests.cards ? {
               cardNumber: user.requests.cards.cardNumber,
               signature: user.requests.cards.signature,
