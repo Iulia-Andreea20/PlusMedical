@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Cards" ALTER COLUMN "CurrentBalance" DROP DEFAULT,
+ALTER COLUMN "CurrentBalance" SET DATA TYPE TEXT,
+ALTER COLUMN "ApprovedAmount" SET DATA TYPE TEXT;

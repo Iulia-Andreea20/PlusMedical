@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import Image from 'next/image';
 
 export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc }) {
   const [flipped, setFlipped] = React.useState(false);
 
   const maskedNumber = cardNumber.replace(/\d(?=\d{4})/g, '*');
+  const [showCVC, setShowCVC] = React.useState(false);
+  const [showCardNumber, setShowCardNumber] = React.useState(false);
 
   const formatCardNumber = (number) => {
     return number.replace(/(.{4})/g, '$1 ').trim();
@@ -14,16 +16,27 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
+  const handleToggleCVC = () => {
+    if(!flipped)
+      handleFlip();
+    setShowCVC((prev) => !prev);
+  };
+  const handleToggleCardNumber = () => {
+    if(flipped)
+      handleFlip();
+    setShowCardNumber((prev) => !prev);
+  };
 
   return (
     <Box
       sx={{
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#D5E9FD', // Optional: Add a background color for better visualization
+        mt: 7,
+        mb: 4,
       }}
     >
       <Box
@@ -31,11 +44,11 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
           width: '340px',
           height: '210px',
           position: 'relative',
-          // perspective: '1000px',
           cursor: 'pointer',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mb: 2,
         }}
         onClick={handleFlip}
       >
@@ -66,7 +79,7 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Box sx={{ display: 'flex' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Image
                   src="/images/logo.png"
                   alt="Stethoscope"
@@ -85,7 +98,7 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
               />
             </Box>
             <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center', letterSpacing: '4px' }}>
-              {formatCardNumber(maskedNumber)}
+              {formatCardNumber(showCardNumber ? cardNumber : maskedNumber)}
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'center', fontSize: '20px' }}>
               {cardHolder}
@@ -98,7 +111,6 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
               <Typography variant="body2" sx={{ fontWeight: 'bold', ml: 1, fontSize: '18px' }}>{expiry}</Typography>
             </Box>
           </Box>
-          {/* Back Side */}
           <Box
             sx={{
               backgroundColor: '#4D8EFF',
@@ -131,11 +143,17 @@ export default function CreditCardDisplay({ cardHolder, cardNumber, expiry, cvc 
                 padding: '7px',
               }}
             >
-              <Typography variant="caption" sx={{ fontWeight: 'bold' }}>***</Typography>
+            <Typography variant="caption" sx={{ fontWeight: 'bold' }}>{showCVC ? cvc : '***'}</Typography>
             </Box>
           </Box>
         </Box>
       </Box>
+      <Button variant="contained" sx={{ mb: 2 }} onClick={handleToggleCardNumber}>
+        {showCardNumber ? 'Hide Card Number' : 'Show Card Number'}
+      </Button>
+      <Button variant="contained" sx={{ mt: 0 }} onClick={handleToggleCVC}>
+        {showCVC ? 'Hide CVC' : 'Show CVC'}
+      </Button>
     </Box>
   );
 }

@@ -119,7 +119,7 @@ export default async function handler(req, res) {
           data: {
             userId: user.id,
             documentTypeId: documentTypes[fileKey],
-            path: nameFile,
+            path: encryptData(nameFile),
           },
         });
       }
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
       const request = await prisma.requests.create({
         data: {
           userId: user.id,
-          requestedAmount: parseFloat(requestedAmount),
+          requestedAmount: requestedAmount,
           status: 'Pending',
         },
       });

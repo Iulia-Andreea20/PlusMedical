@@ -182,7 +182,7 @@ const AdminDashboard = () => {
                         <Box key={index} sx={{ mb: 2 }}>
                           <Typography variant="body2"><strong>Type:</strong> {document.documentType}</Typography>
                           <Typography variant="body2"><strong>Upload Date:</strong> {new Date(document.uploadDate).toLocaleDateString()}</Typography>
-                          <Button variant="contained" color="primary" onClick={() => handleDocumentClick(document.path)}>
+                          <Button variant="contained" color="primary" onClick={() => handleDocumentClick(document.path)} sx = {{mt: 1}}>
                             View Document
                           </Button>
                         </Box>
@@ -201,7 +201,7 @@ const AdminDashboard = () => {
                         {userInfo.requests.status === 'Rejected' && (
                         <Typography variant="body2"><strong>Rejected Reason:</strong> {userInfo.requests.rejectedReason}</Typography>
                         )}
-                      {userInfo.requests.cards && (
+                      {userInfo.requests.cards && userInfo.requests.status === 'Approved' && (
                         <Box sx={{ mt: 2 }}>
                           <Typography variant="h6">Card Information</Typography>
                           <Typography variant="body2"><strong>Card Number:</strong> {userInfo.requests.cards.cardNumber}</Typography>

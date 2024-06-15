@@ -45,12 +45,12 @@ export default function SignInSide() {
       if(userData.role === 'admin') {
         router.push('/admin-dashboard');
       }
-      if(userData.requestStatus === 'null'){
-        router.push('/request');
+      if(userData.requestStatus === 'Approved'){
+        router.push('/card-details');
       } else if(userData.requestStatus === 'Rejected'){
         router.push('/request-details');
       } else {
-        router.push('/card-details');
+        router.push('/request');
       }
 
     } else {

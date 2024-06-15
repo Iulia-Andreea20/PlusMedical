@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container, Box, Typography, Card, CardContent } from '@mui/material';
 import Footer from '@components/Footer';
 import Header from '@components/AppAppBar';
+import { decryptData } from '@utils/cryptoUtilitary';
 
 const RequestDetails = () => {
   const [requestDetails, setRequestDetails] = useState(null);

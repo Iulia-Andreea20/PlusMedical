@@ -47,6 +47,12 @@ function AppAppBar({ mode, toggleColorMode }) {
     }
   };
 
+  const handleNavigation = (sectionId) => {
+    router.push(`/#${sectionId}`).then(() => {
+      scrollToSection(sectionId);
+    });
+  };
+
   const handleLogoClick = () => {
     router.push('/');
   };
@@ -142,7 +148,6 @@ function AppAppBar({ mode, toggleColorMode }) {
                 alignItems: 'center',
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
               {user && user.email ? (
                 <UserIcon />
               ) : (
@@ -195,18 +200,14 @@ function AppAppBar({ mode, toggleColorMode }) {
                       flexGrow: 1,
                     }}
                   >
-                    <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                   </Box>
-                  <MenuItem onClick={() => scrollToSection('testimonials')}>
+                  <MenuItem onClick={() => handleNavigation('testimonials')}>
                     Partners
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('highlights')}>
+                  <MenuItem onClick={() => handleNavigation('highlights')}>
                     Highlights
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('pricing')}>
-                    Pricing
-                  </MenuItem>
-                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+                  <MenuItem onClick={() => handleNavigation('faq')}>FAQ</MenuItem>
                   <Divider />
                   {loading ? (
                       <CircularProgress size={24} />
@@ -250,7 +251,6 @@ function AppAppBar({ mode, toggleColorMode }) {
 
 AppAppBar.propTypes = {
   mode: PropTypes.oneOf(['dark', 'light']).isRequired,
-  toggleColorMode: PropTypes.func.isRequired,
 };
 
 export default AppAppBar;

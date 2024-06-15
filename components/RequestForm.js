@@ -23,7 +23,7 @@ export default function RequestForm() {
   const [formErrors, setFormErrors] = useState({});
   const [isGuarantor, setIsGuarantor] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  // const [submissionError, setSubmissionError] = useState(null);
+  const [submissionError, setSubmissionError] = useState(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const router = useRouter();
 

@@ -56,10 +56,10 @@ function LandingPageContent() {
             <Hero />
             <Divider />
             <Box sx={{ bgcolor: 'background.default' }}>
-              <Services />
+              <Services id="services"/>
               <Divider />
-              <Partners />
-              <Highlights />
+              <Partners id="testimonials"/>
+              <Highlights id="highlights"/>
               <FAQ id="faq" />
               <Footer />
             </Box>

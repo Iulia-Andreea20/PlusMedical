@@ -1,0 +1,145 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Users {
+  id Int [pk, increment]
+  lastName String [not null]
+  firstName String [not null]
+  email String [unique, not null]
+  phoneNumber String [unique, not null]
+  password String [not null]
+  cnp String [unique]
+  coSigner Boolean [not null, default: false]
+  roleId Int [not null, default: 2]
+  role Roles [not null]
+  addresses Addresses [not null]
+  documents Documents [not null]
+  beneficiary BeneficiaryCoSigners
+  coSignerFor BeneficiaryCoSigners
+  requests Requests
+  cards Cards
+}
+
+Table Roles {
+  roleId Int [pk, increment]
+  role String [unique, not null]
+  users Users [not null]
+}
+
+Table BeneficiaryCoSigners {
+  id Int [pk, increment]
+  beneficiaryId Int [unique, not null]
+  coSignerId Int [unique, not null]
+  beneficiary Users [not null]
+  coSigner Users [not null]
+}
+
+Table Countries {
+  id Int [pk, increment]
+  name String [unique, not null]
+  provinces Provinces [not null]
+}
+
+Table Provinces {
+  id Int [pk, increment]
+  name String [unique, not null]
+  countryId Int [not null]
+  country Countries [not null]
+  localities Localities [not null]
+}
+
+Table Localities {
+  id Int [pk, increment]
+  name String [unique, not null]
+  provinceId Int [not null]
+  province Provinces [not null]
+  addresses Addresses [not null]
+}
+
+Table Addresses {
+  id Int [pk, increment]
+  userId Int [not null]
+  user Users [not null]
+  localityId Int [not null]
+  locality Localities [not null]
+  street String [not null]
+  number String [not null]
+  block String
+  staircase String
+  apartment String
+  province String
+  country String
+}
+
+Table DocumentTypes {
+  id Int [pk, increment]
+  name String [not null]
+  description String
+  documents Documents [not null]
+}
+
+Table Documents {
+  id Int [pk, increment]
+  userId Int [not null]
+  user Users [not null]
+  documentTypeId Int [not null]
+  documentType DocumentTypes [not null]
+  uploadDate DateTime [default: `now()`, not null]
+  path String [not null]
+}
+
+Table Requests {
+  id Int [pk, increment]
+  userId Int [unique, not null]
+  user Users [not null]
+  requestDate DateTime [default: `now()`, not null]
+  status RequestStatus [not null]
+  requestedAmount String [not null]
+  updatedStatus DateTime
+  rejectedReason String
+  cards Cards
+}
+
+Table Cards {
+  id Int [pk, increment]
+  requestId Int [unique, not null]
+  request Requests [not null]
+  userId Int [unique, not null]
+  user Users [not null]
+  cardNumber String [unique, not null]
+  signature String [not null]
+  currentBalance String [not null]
+  approvedAmount String [not null]
+  expirationDate DateTime [not null]
+}
+
+Enum RequestStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+Ref: Users.roleId > Roles.roleId
+
+Ref: BeneficiaryCoSigners.beneficiaryId - Users.id
+
+Ref: BeneficiaryCoSigners.coSignerId - Users.id
+
+Ref: Provinces.countryId > Countries.id
+
+Ref: Localities.provinceId > Provinces.id
+
+Ref: Addresses.userId > Users.id
+
+Ref: Addresses.localityId > Localities.id
+
+Ref: Documents.userId > Users.id
+
+Ref: Documents.documentTypeId > DocumentTypes.id
+
+Ref: Requests.userId - Users.id
+
+Ref: Cards.requestId - Requests.id
+
+Ref: Cards.userId - Users.id

@@ -1,6 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { decryptData
 
+ } from '@utils/cryptoUtilitary';
 export const config = {
   api: {
     bodyParser: false,
@@ -22,7 +24,7 @@ const handler = async (req, res) => {
   }
 
   try {
-    const fullPath = path.join(uploadDirectory, fileName);
+    const fullPath = path.join(uploadDirectory, decryptData(fileName));
 
     try {
       await fs.access(fullPath);

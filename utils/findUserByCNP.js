@@ -1,6 +1,5 @@
 import prisma from "@models/prisma";
 import { decryptData } from "@utils/cryptoUtilitary";
-import path from "path";
 
 async function findUserByCNP(cnp) {
   try {
@@ -39,8 +38,6 @@ async function findUserByCNP(cnp) {
         continue;
       }
       else if(decryptData(user.cnp) === cnp){
-        // const uploadDirectory = path.join(process.cwd(), 'Documents');
-        // path.join(uploadDirectory, document.path)
         const decryptedUser = {
           id: user.id,
           firstName: decryptData(user.firstName),
@@ -70,13 +67,12 @@ async function findUserByCNP(cnp) {
             status: user.requests.status,
             requestedAmount: user.requests.requestedAmount,
             updatedStatus: user.requests.updatedStatus ? user.requests.updatedStatus : null,
-            // approvedAmount: user.requests.approvedAmount ? user.requests.approvedAmount : null,
-            rejectedReason: user.requests.rejectedReason ? user.requests.rejectedReason : null,
+            rejectedReason: user.requests.rejectedReason ? decryptData(user.requests.rejectedReason) : null,
             cards: user.requests.cards ? {
-              cardNumber: user.requests.cards.cardNumber,
-              signature: user.requests.cards.signature,
-              currentBalance: user.requests.cards.currentBalance,
-              approvedAmount: user.requests.cards.approvedAmount,
+              cardNumber: decryptData(user.requests.cards.cardNumber),
+              signature: decryptData(user.requests.cards.signature),
+              currentBalance: decryptData(user.requests.cards.currentBalance),
+              approvedAmount: decryptData(user.requests.cards.approvedAmount),
               expirationDate: user.requests.cards.expirationDate,
             } : null,
           } : null,

@@ -62,6 +62,7 @@ const UserIcon = () => {
         }}
       >
         <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
+        {/* <MenuItem onClick={handleClose}>Request</MenuItem> */}
       </Menu>
     </>
   );

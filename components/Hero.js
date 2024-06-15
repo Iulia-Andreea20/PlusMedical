@@ -8,6 +8,9 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+function handleButtonClick() {
+  window.open('/requestform', '_self');
+}
 export default function Hero() {
   return (
     <Box
@@ -73,6 +76,7 @@ export default function Hero() {
           <Button
             variant="contained"
             color="primary"
+            onClick={() => handleButtonClick()}
             sx={{
               fontSize: '1rem',
             }}

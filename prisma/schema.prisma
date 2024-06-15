@@ -7,12 +7,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-model test {
-  nume    String? @db.VarChar(100)
-  prenume String? @db.VarChar(100)
-  id      Int     @id @default(autoincrement())
+generator dbml {
+  provider = "prisma-dbml-generator"
 }
+
 
 model Users {
   id          Int                   @id @default(autoincrement()) @map("UserId")
@@ -125,7 +123,7 @@ model Requests {
   user            Users         @relation(fields: [userId], references: [id], name: "UserRequests")
   requestDate     DateTime      @default(now()) @map("RequestDate")
   status          RequestStatus @map("Status")
-  requestedAmount Float         @map("RequestedAmount")
+  requestedAmount String         @map("RequestedAmount")
   updatedStatus   DateTime?     @map("UpdatedStatus")
   rejectedReason  String?       @map("RejectedReason") 
   cards           Cards?        @relation("RequestCards")
@@ -147,8 +145,8 @@ model Cards {
   user           Users    @relation(fields: [userId], references: [id], name: "UserCards")
   cardNumber     String   @unique @map("CardNumber")
   signature      String   @map("Signature")
-  currentBalance Float    @default(0.0) @map("CurrentBalance")
-  approvedAmount Float    @map("ApprovedAmount")
+  currentBalance String   @map("CurrentBalance")
+  approvedAmount String   @map("ApprovedAmount")
   expirationDate DateTime @map("ExpirationDate")
 
   @@map("Cards")

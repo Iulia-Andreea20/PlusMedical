@@ -30,11 +30,11 @@ export default async function handler(req, res) {
       cardData = {
         requestId: parseInt(id),
         userId: (await prisma.requests.findUnique({ where: { id: parseInt(id) } })).userId,
-        cardNumber: generateVisaCardNumber(),
-        signature: generateSignature(),
-        currentBalance: parseFloat(approvedAmount),
-        approvedAmount: parseFloat(approvedAmount),
-        expirationDate: new Date(new Date().setFullYear(new Date().getFullYear() + 4)), // Setăm data de expirare la 3 ani de la data curentă
+        cardNumber: encryptData(generateVisaCardNumber()),
+        signature: encryptData(generateSignature()),
+        currentBalance: encryptData(approvedAmount.toString()),
+        approvedAmount: encryptData(approvedAmount.toString()),
+        expirationDate: new Date(new Date().setFullYear(new Date().getFullYear() + 4)),
       };
 
       const existingCard = await prisma.cards.findUnique({
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       updateRequestData = {
         status,
         updatedStatus: new Date(),
-        rejectedReason: rejectedReason,
+        rejectedReason: encryptData(rejectedReason),
       };
     }
 
