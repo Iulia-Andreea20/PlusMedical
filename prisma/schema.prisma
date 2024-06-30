@@ -3,14 +3,14 @@ generator client {
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
 generator dbml {
   provider = "prisma-dbml-generator"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 model Users {
   id          Int                   @id @default(autoincrement()) @map("UserId")
@@ -19,16 +19,16 @@ model Users {
   email       String                @unique @map("Mail")
   phoneNumber String                @unique @map("PhoneNumber")
   password    String                @map("Password")
-  cnp         String?               @unique @map("CNP")
   coSigner    Boolean               @default(false) @map("CoSigner")
   roleId      Int                   @default(2) @map("RoleId")
-  role        Roles                 @relation(fields: [roleId], references: [roleId])
+  cnp         String?               @unique @map("CNP")
   addresses   Address[]             @relation("UserAddresses")
-  documents   Document[]            @relation("UserDocuments")
   beneficiary BeneficiaryCoSigners? @relation("Beneficiary")
   coSignerFor BeneficiaryCoSigners? @relation("CoSigner")
-  requests    Requests?             @relation("UserRequests")
   cards       Cards?                @relation("UserCards")
+  documents   Document[]            @relation("UserDocuments")
+  requests    Requests?             @relation("UserRequests")
+  role        Roles                 @relation(fields: [roleId], references: [roleId])
 
   @@map("Users")
 }
@@ -63,8 +63,8 @@ model Province {
   id         Int        @id @default(autoincrement()) @map("ProvinceId")
   name       String     @unique @map("Name")
   countryId  Int        @map("CountryId")
-  country    Country    @relation(name: "CountryProvinces", fields: [countryId], references: [id])
   localities Locality[] @relation("ProvinceLocalities")
+  country    Country    @relation("CountryProvinces", fields: [countryId], references: [id])
 
   @@map("Provinces")
 }
@@ -73,8 +73,8 @@ model Locality {
   id         Int       @id @default(autoincrement()) @map("LocalityId")
   name       String    @unique @map("Name")
   provinceId Int       @map("ProvinceId")
-  province   Province  @relation(name: "ProvinceLocalities", fields: [provinceId], references: [id])
   addresses  Address[] @relation("LocalityAddresses")
+  province   Province  @relation("ProvinceLocalities", fields: [provinceId], references: [id])
 
   @@map("Localities")
 }
@@ -82,9 +82,7 @@ model Locality {
 model Address {
   id         Int      @id @default(autoincrement()) @map("AddressId")
   userId     Int      @map("UserId")
-  user       Users    @relation(fields: [userId], references: [id], name: "UserAddresses")
   localityId Int      @map("LocalityId")
-  locality   Locality @relation(fields: [localityId], references: [id], name: "LocalityAddresses")
   street     String   @map("Street")
   number     String   @map("Number")
   block      String?  @map("Block")
@@ -92,6 +90,8 @@ model Address {
   apartment  String?  @map("Apartment")
   province   String?  @map("Province")
   country    String?  @map("Country")
+  locality   Locality @relation("LocalityAddresses", fields: [localityId], references: [id])
+  user       Users    @relation("UserAddresses", fields: [userId], references: [id])
 
   @@map("Addresses")
 }
@@ -108,11 +108,11 @@ model DocumentType {
 model Document {
   id             Int          @id @default(autoincrement()) @map("DocumentId")
   userId         Int          @map("UserId")
-  user           Users        @relation(fields: [userId], references: [id], name: "UserDocuments")
   documentTypeId Int          @map("DocumentTypeId")
-  documentType   DocumentType @relation(fields: [documentTypeId], references: [id], name: "DocumentTypeDocuments")
   uploadDate     DateTime     @default(now()) @map("UploadDate")
   path           String       @map("Path")
+  documentType   DocumentType @relation("DocumentTypeDocuments", fields: [documentTypeId], references: [id])
+  user           Users        @relation("UserDocuments", fields: [userId], references: [id])
 
   @@map("Documents")
 }
@@ -120,34 +120,34 @@ model Document {
 model Requests {
   id              Int           @id @default(autoincrement()) @map("RequestId")
   userId          Int           @unique @map("UserId")
-  user            Users         @relation(fields: [userId], references: [id], name: "UserRequests")
   requestDate     DateTime      @default(now()) @map("RequestDate")
   status          RequestStatus @map("Status")
-  requestedAmount String         @map("RequestedAmount")
+  requestedAmount String        @map("RequestedAmount")
+  rejectedReason  String?       @map("RejectedReason")
   updatedStatus   DateTime?     @map("UpdatedStatus")
-  rejectedReason  String?       @map("RejectedReason") 
   cards           Cards?        @relation("RequestCards")
+  user            Users         @relation("UserRequests", fields: [userId], references: [id])
 
   @@map("Requests")
+}
+
+model Cards {
+  id             Int      @id @default(autoincrement()) @map("CardId")
+  requestId      Int      @unique @map("RequestId")
+  userId         Int      @unique @map("UserId")
+  cardNumber     String   @unique @map("CardNumber")
+  signature      String   @map("Signature")
+  currentBalance String   @map("CurrentBalance")
+  approvedAmount String   @map("ApprovedAmount")
+  expirationDate DateTime @map("ExpirationDate")
+  request        Requests @relation("RequestCards", fields: [requestId], references: [id])
+  user           Users    @relation("UserCards", fields: [userId], references: [id])
+
+  @@map("Cards")
 }
 
 enum RequestStatus {
   Pending
   Approved
   Rejected
-}
-
-model Cards {
-  id             Int      @id @default(autoincrement()) @map("CardId")
-  requestId      Int      @unique @map("RequestId")
-  request        Requests @relation(fields: [requestId], references: [id], name: "RequestCards")
-  userId         Int      @unique @map("UserId")
-  user           Users    @relation(fields: [userId], references: [id], name: "UserCards")
-  cardNumber     String   @unique @map("CardNumber")
-  signature      String   @map("Signature")
-  currentBalance String   @map("CurrentBalance")
-  approvedAmount String   @map("ApprovedAmount")
-  expirationDate DateTime @map("ExpirationDate")
-
-  @@map("Cards")
 }

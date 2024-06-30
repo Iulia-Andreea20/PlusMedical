@@ -45,6 +45,7 @@ async function findUserByCNP(cnp) {
           email: decryptData(user.email),
           phoneNumber: decryptData(user.phoneNumber),
           cnp: cnp,
+          
           addresses: user.addresses.map(address => ({
             street: decryptData(address.street),
             number: decryptData(address.number),

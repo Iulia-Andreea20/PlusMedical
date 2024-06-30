@@ -28,17 +28,17 @@ export default function RequestForm() {
   const router = useRouter();
 
   
-  const checkBeneficiaryCNP = async (cnp) => {
-    const response = await fetch('/api/check-beneficiary-cnp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ cnp }),
-    });
-    const data = await response.json();
-    return data.exists;
-  };
+  // const checkBeneficiaryCNP = async (cnp) => {
+  //   const response = await fetch('/api/check-beneficiary-cnp', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ cnp }),
+  //   });
+  //   const data = await response.json();
+  //   return data.exists;
+  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -92,10 +92,10 @@ export default function RequestForm() {
       } else if (beneficiaryCNP === cnp) {
         errors.beneficiaryCNP = 'Beneficiary CNP must be different from Personal CNP.';
       } else {
-        const exists = await checkBeneficiaryCNP(beneficiaryCNP);
-        if (!exists) {
-          errors.beneficiaryCNP = 'Beneficiary CNP does not exist in the database.';
-        }
+        // const exists = await checkBeneficiaryCNP(beneficiaryCNP);
+        // if (!exists) {
+        //   errors.beneficiaryCNP = 'Beneficiary CNP does not exist in the database.';
+        // }
       }
     }
 

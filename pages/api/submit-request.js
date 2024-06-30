@@ -1,3 +1,4 @@
+const {findUserByCNP} = require("@utils/findUserByCNP");
 import formidable from 'formidable';
 import prisma from '@models/prisma'; 
 import { encryptData, decryptData } from '@utils/cryptoUtilitary'; 
@@ -132,23 +133,27 @@ export default async function handler(req, res) {
         },
       });
 
-      if (isGuarantor && beneficiaryCNP) {
-        const beneficiary = await prisma.users.findUnique({
-          where: { cnp: beneficiaryCNP },
-        });
-
-        if (!beneficiary) {
+      const beneficiaryData = await findUserByCNP(beneficiaryCNP);
+      if (isGuarantor && beneficiaryData) {
+        if (!beneficiaryData.cnp) {
           return res.status(400).json({ message: 'Beneficiary CNP does not exist' });
         }
 
         await prisma.beneficiaryCoSigners.create({
+
           data: {
-            beneficiaryId: beneficiary.id,
+            beneficiaryId: beneficiaryData.id,
             coSignerId: user.id,
           },
         });
-      }
 
+      await prisma.users.update({
+        where: {id: user.id},
+        data: {
+          coSigner: true,
+        }
+      });
+    }
       return res.status(200).json({ message: 'Request submitted successfully', requestId: request.id });
     } catch (error) {
       console.error('Internal server error:', error);

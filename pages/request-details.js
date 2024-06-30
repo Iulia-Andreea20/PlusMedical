@@ -100,11 +100,11 @@ const RequestDetails = () => {
                     Approved Amount: {requestDetails.cards.approvedAmount} RON
                   </Typography>
                 )}
-                {/* {requestDetails.status === 'Rejected' && (
+                {requestDetails.status === 'Rejected' && (
                   <Typography variant="body2" color="text.secondary" sx={{ fontFamily: 'Arial, sans-serif' }}>
                     Rejection Reason: {requestDetails.rejectedReason}
                   </Typography>
-                )} */}
+                )}
               </CardContent>
             </Card>
           </Box>

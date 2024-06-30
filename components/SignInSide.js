@@ -47,7 +47,7 @@ export default function SignInSide() {
       }
       if(userData.requestStatus === 'Approved'){
         router.push('/card-details');
-      } else if(userData.requestStatus === 'Rejected'){
+      } else if(userData.requestStatus === 'Rejected' || userData.requestStatus === 'Pending'){
         router.push('/request-details');
       } else {
         router.push('/request');

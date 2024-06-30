@@ -101,7 +101,8 @@ const AdminDashboard = () => {
               id: userInfo.requests.id, 
               status: 'Rejected', 
               approvedAmount: null, 
-              rejectedReason: rejectReason 
+              rejectedReason: rejectReason,
+
             }),
           });
           if (response.ok) {
@@ -158,6 +159,7 @@ const AdminDashboard = () => {
                   <Typography variant="body1"><strong>Name:</strong> {userInfo.firstName} {userInfo.lastName}</Typography>
                   <Typography variant="body1"><strong>Email:</strong> {userInfo.email}</Typography>
                   <Typography variant="body1"><strong>Phone Number:</strong> {userInfo.phoneNumber}</Typography>
+                  <Typography variant="body1"><strong>CNP:</strong> {userInfo.coSigner}</Typography>
                   {userInfo.addresses && userInfo.addresses.length > 0 && (
                     <Box sx={{ mt: 2 }}>
                       <Typography variant="h6">Addresses</Typography>
@@ -271,6 +273,47 @@ const AdminDashboard = () => {
                   )}
                 </Box>
               </Grid>
+              {userInfo.coSigner && (
+              <Grid item xs={12} md={3}>
+                <Box>
+                  <Typography variant="h6">Co-Signer Information</Typography>
+                  <Typography variant="body1"><strong>Name:</strong> {userInfo.coSigner.firstName} {userInfo.coSigner.lastName}</Typography>
+                  <Typography variant="body1"><strong>Email:</strong> {userInfo.coSigner.email}</Typography>
+                  <Typography variant="body1"><strong>Phone Number:</strong> {userInfo.coSigner.phoneNumber}</Typography>
+                  {userInfo.coSigner.addresses && userInfo.coSigner.addresses.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="h6">Addresses</Typography>
+                      {userInfo.coSigner.addresses.map((address, index) => (
+                        <Box key={index} sx={{ mb: 2 }}>
+                          <Typography variant="body2"><strong>Street:</strong> {address.street}</Typography>
+                          <Typography variant="body2"><strong>Number:</strong> {address.number}</Typography>
+                          {address.block && <Typography variant="body2"><strong>Block:</strong> {address.block}</Typography>}
+                          {address.staircase && <Typography variant="body2"><strong>Staircase:</strong> {address.staircase}</Typography>}
+                          {address.apartment && <Typography variant="body2"><strong>Apartment:</strong> {address.apartment}</Typography>}
+                          <Typography variant="body2"><strong>Locality:</strong> {address.locality}</Typography>
+                          <Typography variant="body2"><strong>Province:</strong> {address.province}</Typography>
+                          <Typography variant="body2"><strong>Country:</strong> {address.country}</Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                  {userInfo.coSigner.documents && userInfo.coSigner.documents.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="h6">Documents</Typography>
+                      {userInfo.coSigner.documents.map((document, index) => (
+                        <Box key={index} sx={{ mb: 2 }}>
+                          <Typography variant="body2"><strong>Type:</strong> {document.documentType}</Typography>
+                          <Typography variant="body2"><strong>Upload Date:</strong> {new Date(document.uploadDate).toLocaleDateString()}</Typography>
+                          <Button variant="contained" color="primary" onClick={() => handleDocumentClick(document.path)} sx={{ mt: 1 }}>
+                            View Document
+                          </Button>
+                        </Box>
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              </Grid>
+            )}
               {selectedDocument && (
                 <Grid item xs={12} md={8.5}>
                   <Box>
